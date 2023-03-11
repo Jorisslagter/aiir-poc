@@ -34,7 +34,7 @@ app.post("/documents", upload.single("image"), (req, res) => {
   }
 
   const document = {
-    id: uuid.v4(),
+    id: data.id,
     timestamp: new Date().toISOString(),
     report: data.report === "true" ? true : false,
     description: data.description,
@@ -82,6 +82,7 @@ app.get("/documents/:id", (req, res) => {
   }
 });
 
-app.listen(port, () => {
-  console.log(`Server listening at http://localhost:${port}`);
+let host = "192.168.178.42";
+app.listen(port, host, () => {
+  console.log(`Server listening at http://${host}:${port}`);
 });

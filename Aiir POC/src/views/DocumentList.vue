@@ -5,19 +5,11 @@
 
   <div class="document-list">
     <div v-for="document in documents" :key="document.id" class="document-item">
-      <div class="document-image" v-if="document.image_url">
-        <img :src="'http://localhost:3000/' + document.image_url" alt="document image" />
-      </div>
-      <div class="document-image" v-if="!document.image_url">
-        <img
-          :src="'data:image/png;base64,' + JSON.parse(document.image_file_base64).file_base64"
-          alt="document image"
-        />
-      </div>
+      <DocumentImage :document="document" />
       <div class="document-info">
         <div class="document-timestamp">{{ document.timestamp }}</div>
         <div class="document-report">
-          {{ document.report ? 'Report image' : 'Not a report image' }}
+          {{ document.report ? 'Reported' : 'Not reported' }}
         </div>
         <div class="document-description">{{ document.description }}</div>
       </div>
@@ -36,13 +28,14 @@
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
 import { useDocumentsStore } from '../stores/documents'
+import DocumentImage from '../components/DocumentImage.vue'
 
 const isServerRunning = ref(false)
 const pingInterval = 1000
 let pingTimeoutId
 
 const pingServer = () => {
-  fetch('http://localhost:3000/ping')
+  fetch('http://192.168.178.42:3000/ping')
     .then((response) => {
       isServerRunning.value = response.ok
       scheduleNextPing()
@@ -106,24 +99,13 @@ const sync = () => {
   flex-direction: column;
 }
 
-.document-image {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 60%;
-}
-
-.document-image img {
-  max-width: 100%;
-  max-height: 100%;
-}
-
 .document-info {
   display: flex;
   flex-direction: column;
   height: 40%;
   padding: 16px;
+
+  overflow: hidden;
 }
 
 .document-timestamp {

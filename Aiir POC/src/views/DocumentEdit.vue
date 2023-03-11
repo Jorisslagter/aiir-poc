@@ -1,10 +1,7 @@
 <template>
   <form class="document-form" @submit.prevent="onSubmit">
     <div class="form-row">
-      <label for="image">Image:</label>
-      <div class="image-preview">
-        <img :src="state.image" :alt="state.description" />
-      </div>
+      <DocumentImage :document="document" />
     </div>
     <div class="form-row">
       <label for="report">Report:</label>
@@ -23,6 +20,7 @@ import { reactive } from 'vue'
 import { useDocumentsStore } from '../stores/documents'
 import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import DocumentImage from '../components/DocumentImage.vue'
 
 const state = reactive({
   report: false,

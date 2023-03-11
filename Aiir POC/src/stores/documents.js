@@ -23,6 +23,7 @@ export const useDocumentsStore = defineStore('documents', {
 
   actions: {
     async createDocument(document) {
+      document.id = uuidv4()
       document.timestamp = new Date()
       document.uploaded = false
       document.image_local = URL.createObjectURL(document.image)
@@ -38,7 +39,6 @@ export const useDocumentsStore = defineStore('documents', {
 
         document.image_file_base64 = JSON.stringify(imageObj)
 
-        console.log('Add to documents', document)
         this.documents.push(document)
 
         this.uploadToServer(document)
@@ -66,7 +66,7 @@ export const useDocumentsStore = defineStore('documents', {
       let tmp = JSON.parse(document.image_file_base64).file_base64
       formData.append('base64', tmp)
 
-      fetch('http://localhost:3000/documents', {
+      fetch('http://192.168.178.42:3000/documents', {
         method: 'POST',
         body: formData
       }).then((response) => {
@@ -79,14 +79,14 @@ export const useDocumentsStore = defineStore('documents', {
       })
     },
     syncDocuments() {
-      // const notUploadedDocuments = this.getPendingDocuments
-      // notUploadedDocuments.forEach((document) => {
-      //   this.uploadToServer(document)
-      // })
+      const notUploadedDocuments = this.getPendingDocuments
+      notUploadedDocuments.forEach((document) => {
+        this.uploadToServer(document)
+      })
     },
     initializeStore() {
       if (!this.initialized)
-        fetch('http://localhost:3000/documents', {
+        fetch('http://192.168.178.42:3000/documents', {
           method: 'GET'
         })
           .then((response) => response.json())
