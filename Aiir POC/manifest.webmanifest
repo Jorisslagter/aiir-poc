@@ -1,0 +1,15 @@
+{
+  "background_color": "white",
+  "description": "Proof of Concept Aiir",
+  "display": "fullscreen",
+  "icons": [
+    {
+      "src": "favicon.ico",
+      "sizes": "16x16",
+      "type": "image/png"
+    }
+  ],
+  "name": "Aiir Poc",
+  "short_name": "aiir_poc",
+  "start_url": "/index.html"
+}
