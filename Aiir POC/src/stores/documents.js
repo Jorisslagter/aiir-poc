@@ -5,10 +5,13 @@ import { useStorage } from '@vueuse/core'
 export const useDocumentsStore = defineStore('documents', {
   id: 'documents',
   state: () => ({
-    documents: useStorage('documents', [])
+    documents: useStorage('documents', []),
+    isServerRunning: false,
+    initialized: false
   }),
 
   getters: {
+    isInitialized: (state) => state.initialized,
     getDocuments: (state) => state.documents,
 
     getDocument: (state) => (id) => state.documents.find((d) => d.id === id),
@@ -19,12 +22,28 @@ export const useDocumentsStore = defineStore('documents', {
   },
 
   actions: {
-    createDocument(document) {
-      document.id = uuidv4()
+    async createDocument(document) {
       document.timestamp = new Date()
       document.uploaded = false
-      // Add the document to the state
-      this.documents.push(document)
+      document.image_local = URL.createObjectURL(document.image)
+
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        const base64String = reader.result.replace('data:', '').replace(/^.+,/, '')
+        let imageObj = {
+          name: 'tmp-' + uuidv4(),
+          timestamp: Date.now(),
+          file_base64: base64String.toString()
+        }
+
+        document.image_file_base64 = JSON.stringify(imageObj)
+
+        console.log('Add to documents', document)
+        this.documents.push(document)
+
+        this.uploadToServer(document)
+      }
+      reader.readAsDataURL(document.image)
 
       return Promise.resolve(document)
     },
@@ -37,6 +56,49 @@ export const useDocumentsStore = defineStore('documents', {
     deleteDocument(id) {
       const index = this.documents.findIndex((document) => document.id === id)
       this.documents.splice(index, 1)
+    },
+
+    uploadToServer(document) {
+      let formData = new FormData()
+
+      formData.append('document', JSON.stringify(document))
+
+      let tmp = JSON.parse(document.image_file_base64).file_base64
+      formData.append('base64', tmp)
+
+      fetch('http://localhost:3000/documents', {
+        method: 'POST',
+        body: formData
+      }).then((response) => {
+        if (response.status == 201) {
+          let data = response.json()
+          document.uploaded = true
+          document.image = data.image
+          this.updateDocument(document)
+        }
+      })
+    },
+    syncDocuments() {
+      // const notUploadedDocuments = this.getPendingDocuments
+      // notUploadedDocuments.forEach((document) => {
+      //   this.uploadToServer(document)
+      // })
+    },
+    initializeStore() {
+      if (!this.initialized)
+        fetch('http://localhost:3000/documents', {
+          method: 'GET'
+        })
+          .then((response) => response.json())
+          .then((response) => {
+            console.log(response)
+            const newDocuments = response.filter(
+              (doc) => !this.documents.some((d) => d.id === doc.id)
+            )
+            console.log(newDocuments)
+            this.documents = [...this.documents, ...newDocuments]
+            this.initialized = true
+          })
     }
   }
 })

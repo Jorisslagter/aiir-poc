@@ -1,21 +1,20 @@
 <template>
-  <form @submit.prevent="onSubmit">
-    <div>
+  <form class="document-form" @submit.prevent="onSubmit">
+    <div class="form-row">
       <label for="image">Image:</label>
-      <div>
-        <img :src="state.image" :alt="state.description" width="100" height="100" />
+      <div class="image-preview">
+        <img :src="state.image" :alt="state.description" />
       </div>
-      <input type="file" id="image" ref="imageInput" accept="image/*" @change="onImageChange" />
     </div>
-    <div>
+    <div class="form-row">
       <label for="report">Report:</label>
-      <input type="checkbox" id="report" v-model="state.report" />
+      <input class="report-input" type="checkbox" id="report" v-model="state.report" />
     </div>
-    <div>
+    <div class="form-row">
       <label for="description">Description:</label>
-      <textarea id="description" v-model="state.description"></textarea>
+      <textarea class="description-input" id="description" v-model="state.description"></textarea>
     </div>
-    <button type="submit">Save</button>
+    <button class="submit-button" type="submit">Save</button>
   </form>
 </template>
 
@@ -43,29 +42,11 @@ state.report = ref(document.report)
 state.description = ref(document.description)
 state.image = ref(document.image)
 
-const onImageChange = (e) => {
-  let files = e.target.files || e.dataTransfer.files
-  if (!files.length) {
-    return
-  }
-  createImage(files[0])
-}
-
-const createImage = (file) => {
-  var reader = new FileReader()
-
-  reader.onload = (e) => {
-    state.image = e.target.result
-  }
-  reader.readAsDataURL(file)
-}
-
 const onSubmit = () => {
   const updatedDocument = {
     ...document,
     report: state.report,
-    description: state.description,
-    image: state.image
+    description: state.description
   }
 
   store.updateDocument(updatedDocument)
@@ -73,3 +54,62 @@ const onSubmit = () => {
   router.push('/documents')
 }
 </script>
+
+<style>
+.document-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.form-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.image-preview {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #ccc;
+  margin-right: 10px;
+  width: 100px;
+  height: 100px;
+  overflow: hidden;
+}
+
+.image-preview img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.image-input {
+  display: none;
+}
+
+.report-input {
+  margin-right: 10px;
+}
+
+.description-input {
+  width: 100%;
+  height: 100px;
+}
+
+.submit-button {
+  margin-top: 10px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.submit-button:hover {
+  background-color: #3e8e41;
+}
+</style>
