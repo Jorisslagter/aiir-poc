@@ -1,5 +1,4 @@
 <template>
-  <!-- <button class="add-button" @click="addToHome">Add to home screen</button> -->
   <section>
     <h1>Aiir Poc</h1>
     <router-link to="/documents">View Documents</router-link>
