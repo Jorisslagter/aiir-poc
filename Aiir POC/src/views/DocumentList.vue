@@ -35,7 +35,7 @@ const pingInterval = 1000
 let pingTimeoutId
 
 const pingServer = () => {
-  fetch('http://192.168.178.42:3000/ping')
+  fetch('http://localhost:3000/ping')
     .then((response) => {
       isServerRunning.value = response.ok
       scheduleNextPing()

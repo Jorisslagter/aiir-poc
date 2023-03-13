@@ -82,7 +82,7 @@ app.get("/documents/:id", (req, res) => {
   }
 });
 
-let host = "192.168.178.42";
+let host = "127.0.0.1";
 app.listen(port, host, () => {
   console.log(`Server listening at http://${host}:${port}`);
 });

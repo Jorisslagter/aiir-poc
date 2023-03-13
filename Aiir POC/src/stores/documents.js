@@ -66,7 +66,7 @@ export const useDocumentsStore = defineStore('documents', {
       let tmp = JSON.parse(document.image_file_base64).file_base64
       formData.append('base64', tmp)
 
-      fetch('http://192.168.178.42:3000/documents', {
+      fetch('http://localhost:3000/documents', {
         method: 'POST',
         body: formData
       }).then((response) => {
@@ -86,7 +86,7 @@ export const useDocumentsStore = defineStore('documents', {
     },
     initializeStore() {
       if (!this.initialized)
-        fetch('http://192.168.178.42:3000/documents', {
+        fetch('http://localhost:3000/documents', {
           method: 'GET'
         })
           .then((response) => response.json())

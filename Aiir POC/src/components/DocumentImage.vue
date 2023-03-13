@@ -2,7 +2,7 @@
   <div class="document-image">
     <img
       v-if="document.image_url"
-      :src="'http://192.168.178.42:3000/' + document.image_url"
+      :src="'http://localhost:3000/' + document.image_url"
       alt="document image"
     />
     <img
